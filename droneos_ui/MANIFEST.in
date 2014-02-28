@@ -1,0 +1,2 @@
+include *.txt *.ini *.cfg *.rst
+recursive-include droneos_ui *.ico *.png *.css *.gif *.jpg *.pt *.txt *.mak *.mako *.js *.html *.xml
