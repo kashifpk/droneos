@@ -98,7 +98,7 @@ def say_hello(request):
     index_1=file2.find(" ", index_2)
 
   
-  path1=path(name=pathname)
+  path1=path(name=pathname, desc=pathdesc)
   DBSession.add(path1)
   a = DBSession.query(path.id).order_by(path.id.desc()).first()
   index=0;

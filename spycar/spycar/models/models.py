@@ -22,7 +22,7 @@ class path(Base):
   
 class coordinates(Base):
   __tablename__= 'Coordinates'
-  cordi_num=Column(Integer, primary_key=True)
+  cordi_num=Column(Unicode(200), primary_key=True)
   path_id=Column(Integer, ForeignKey('Path.id'))
   #Point=Column(Unicode(200))
   latitude=Column(Unicode(200))
