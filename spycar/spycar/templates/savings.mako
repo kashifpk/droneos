@@ -22,7 +22,7 @@
 </td>
 
 <td width="100">
-<h3>&nbsp;&nbsp;&nbsp;${category.cordi}</h3>
+<h3>&nbsp;&nbsp;&nbsp;${category.cordi_num}</h3>
 </td>
 
 <td width="200">

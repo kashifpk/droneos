@@ -29,5 +29,10 @@ if __name__ == '__main__':
    while 1:
        # In the main thread, every 5 seconds print the current value
        time.sleep(5)
+<<<<<<< HEAD
        #print gpsp.get_current_value.latitude
        print gpsp.get_current_value()
+=======
+       print gpsp.get_current_value()
+       #print gpsp.get_current_value()
+>>>>>>> f9329e6af1115d32ace3f6262a5cc39085906b66
