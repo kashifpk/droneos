@@ -1,38 +1,41 @@
 <%inherit file="pyckauth_base.mako"/>
-
 <style>
-    li {display: inline; list-style: none;}
+    li {display: inline;}
 </style>
 
-<div>
-<h1>droneos_ui - Authentication Manager - Route Permissions</h1>
-
-<form action="${request.current_route_url()}" method="post">
-
-<table style="margin: auto;">
-    ${route_permissions_form.as_table() | n}
+<div class="panel panel-primary">
+  <div class="panel-heading">droneos_ui - Authentication Manager - Route Permissions</div>
+  <div class="panel-body">
     
-    <tr>
-        <td style="text-align: right" colspan="2">
-            <input type="submit" value="${action.title()} Route Permission" class="button green" />
-        </td>
-    </tr>
-</table>
+<form action="${request.current_route_url()}" method="post" role="form" class="form-horizontal">
+
+
+    ${route_permissions_form.as_div() | n}
+    
+    <div class="form-group">
+        <div class="col-md-offset-3 col-md-9">
+          <button type="submit" class="btn btn-success">${action.title()} Route Permission</button>
+        </div>
+    </div>
+    
 </form>
-
-<br /><br />
-
-<table style="margin: auto;">
-    <tr class="tr_heading">
+</div>
+  
+<div class="panel-heading">Existing Route Permissions</div>
+<div class="panel-body">
+  <table class="table table-striped table-hover">
+    <thead>
+    <tr style="font-weight: bold; font-size: larger;">
         <th>Route Name</th>
         <th>Permission</th>
         <th>Request Method</th>
         <th></th>   
     </tr>
-    
+    </thead>
+    <tbody>
     %for RP in route_permissions:
     
-    <tr class="${loop.cycle('oddrow', 'evenrow')}">
+    <tr>
         <td>${RP.route_name}</td>
         <td>${RP.permission}</td>
         <td>${RP.method}</td>
@@ -43,6 +46,7 @@
     </tr>
     
     %endfor
+    </tbody>
 </table>
 
 

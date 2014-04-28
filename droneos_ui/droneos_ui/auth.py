@@ -1,5 +1,5 @@
 from pyramid.httpexceptions import HTTPNotFound, HTTPForbidden
-from models import DBSession, Permission, User, UserPermission, RoutePermission
+from models import db, Permission, User, UserPermission, RoutePermission
 from pyramid.urldispatch import _compile_route
 from sqlalchemy import or_, func
 
@@ -17,7 +17,7 @@ def authenticator(handler, registry):
         logged_in_user = request.session.get('logged_in_user', None)
 
         protected_routes = []
-        routes = DBSession.query(RoutePermission.route_name).distinct().all()
+        routes = db.query(RoutePermission.route_name).distinct().all()
 
         for R in routes:
             protected_routes.append(R[0])
@@ -61,7 +61,7 @@ def is_allowed(request, routename, method='ALL', check_route=True):
     """
 
     if check_route:
-        route = DBSession.query(RoutePermission).filter_by(route_name=routename).first()
+        route = db.query(RoutePermission).filter_by(route_name=routename).first()
         if not route:
             return True
 
@@ -72,7 +72,7 @@ def is_allowed(request, routename, method='ALL', check_route=True):
     if request.session.get('auth_static_permission', None):
         user_permissions.append(request.session.get('auth_static_permission', None))
 
-    has_permission = DBSession.query(func.count(RoutePermission.permission)).filter(
+    has_permission = db.query(func.count(RoutePermission.permission)).filter(
                                             RoutePermission.route_name == routename).filter(
                                             RoutePermission.method.in_(method)).filter(
                                             RoutePermission.permission.in_(user_permissions)).scalar()

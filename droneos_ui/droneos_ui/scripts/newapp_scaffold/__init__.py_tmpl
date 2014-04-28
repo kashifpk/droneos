@@ -1,4 +1,4 @@
-from apps import PROJECT_NAME, project_package
+from .. import PROJECT_NAME, project_package
 
 
 APP_NAME = '{{appname}}'

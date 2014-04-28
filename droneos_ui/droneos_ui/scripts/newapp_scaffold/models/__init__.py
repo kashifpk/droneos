@@ -8,7 +8,7 @@ from sqlalchemy.orm import (
 from zope.sqlalchemy import ZopeTransactionExtension
 from .. import project_package, APP_NAME
 
-DBSession = project_package.models.DBSession
+db = project_package.models.db
 
 
 class RenameTables(DeclarativeMeta): 
@@ -23,7 +23,7 @@ Base = declarative_base(metaclass=RenameTables)
 
 #from models import MyModel
 
-__all__ = ['DBSession', 'Base',
+__all__ = ['db', 'Base',
            #'MyModel'
            ]
 

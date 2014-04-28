@@ -3,10 +3,11 @@ import transaction
 
 from pyramid import testing
 
-from ..models import DBSession
+from ..models import db
 
 
 class TestMyView(unittest.TestCase):
+
     def setUp(self):
         pass
 

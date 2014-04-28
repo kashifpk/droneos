@@ -1,37 +1,41 @@
 <%inherit file="pyckauth_base.mako"/>
 
+<div class="panel panel-primary">
+  <div class="panel-heading">droneos_ui - Authentication Manager - Permissions</div>
+  <div class="panel-body">
 
-<div>
-<h1>droneos_ui - Authentication Manager - Permissions</h1>
-%if "edit"==action:
-<form action="${request.current_route_url()}?action=edit&id=${permission.permission}" method="post">
-%else:
-<form action="${request.current_route_url()}" method="post">
-%endif
+    %if "edit"==action:
+    <form action="${request.current_route_url()}?action=edit&id=${permission.permission}" method="post" role="form" class="form-horizontal">
+    %else:
+    <form action="${request.current_route_url()}" method="post" role="form" class="form-horizontal">
+    %endif
 
-<table style="margin: auto;">
-    ${permission_form.as_table() | n}
+
+    ${permission_form.as_div() | n}
     
-    <tr>
-        <td style="text-align: right">
-            <input type="submit" value="${action.title()} Permission" class="button green" />
-        </td>
-    </tr>
-</table>
+    <div class="form-group">
+        <div class="col-md-offset-3 col-md-9">
+          <button type="submit" class="btn btn-success">${action.title()} Permission</button>
+        </div>
+    </div>
 </form>
-
-<br /><br />
-
-<table style="margin: auto;">
-    <tr class="tr_heading">
+</div>
+  
+<div class="panel-heading">Existing Permissions</div>
+<div class="panel-body">
+  <table class="table table-striped table-hover">
+    <thead>
+        <tr style="font-weight: bold; font-size: larger;">
         <th>Permission</th>
         <th>Description</th>
         <th></th>   
-    </tr>
+        </tr>
+    </thead>
+    <tbody>
     
     %for P in permissions:
     
-    <tr class="${loop.cycle('oddrow', 'evenrow')}">
+    <tr>
         <td>${P.permission}</td>
         <td>${P.description}</td>
         <td>
@@ -41,6 +45,7 @@
     </tr>
     
     %endfor
+    </tbody>
 </table>
 
 

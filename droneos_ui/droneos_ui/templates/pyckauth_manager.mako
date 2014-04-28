@@ -1,28 +1,29 @@
 <%inherit file="pyckauth_base.mako"/>
 
 
-<div>
-<h1>droneos_ui - Authentication Manager</h1>
-    
-    <br />
-    <div id="authmanager_statistics">
-    <table style="width: 60%; margin: auto; font-size: large; font-weight: bold;">
-        <tr class="tr_heading">
+<div class="panel panel-primary">
+  <div class="panel-heading">droneos_ui - Authentication Manager</div>
+  <div class="panel-body">
+    <table class="table table-striped table-hover">
+        <thead>
+        <tr class="info">
             <th colspan="2">Authentication Manager - Statistics</th>
         </tr>
-        <tr class="oddrow">
+        </thead>
+        <tbody>
+        <tr>
             <td>Total Users</td>
             <td style="text-align: right">${user_count}</td>
         </tr>
-        <tr class="evenrow">
+        <tr>
             <td>Total Permissions (Roles)</td>
             <td style="text-align: right">${permission_count}</td>
         </tr>
-        <tr class="oddrow">
+        <tr>
             <td>Total Routes</td>
             <td style="text-align: right">${route_count}</td>
         </tr>
+        </tbody>
     </table>
-    
-    </div>  
+  </div>
 </div>

@@ -1,5 +1,10 @@
 <%!
 from droneos_ui.auth import is_allowed
+
+auth_links = [('home', 'Home'), ('contact', 'Contact Us'),
+			  ('add_route', 'Add Route'), ('view_routes', 'View Routes'),
+              ('admin.admin_index', 'Admin Section'), ('pyckauth_manager', 'Auth Manager')]
+
 %>
 
 <!DOCTYPE html>
@@ -10,12 +15,14 @@ from droneos_ui.auth import is_allowed
   ${self.meta()}
   
   <link rel="shortcut icon" href="${request.static_url('droneos_ui:static/favicon.ico')}" />
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="${request.static_url('droneos_ui:static/bootstrap/css/bootstrap.min.css')}">
+  <link rel="stylesheet" href="${request.static_url('droneos_ui:static/bootstrap/css/bootstrap-theme.min.css')}">
+  
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="${request.static_url('droneos_ui:static/pyck.css')}" type="text/css" media="screen" charset="utf-8" />
-  <link rel="stylesheet" href="http://static.pylonsproject.org/fonts/nobile/stylesheet.css" media="screen" />
-  <link rel="stylesheet" href="http://static.pylonsproject.org/fonts/neuton/stylesheet.css" media="screen" />
-  <!--[if lte IE 6]>
-  <link rel="stylesheet" href="${request.static_url('droneos_ui:static/ie6.css')}" type="text/css" media="screen" charset="utf-8" />
-  <![endif]-->
+  
+  <!-- Dojo -->
   <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/dojo/1.8.3/dojo/resources/dojo.css" type="text/css" charset="utf-8" />
   <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/dojo/1.8.3/dijit//themes/claro/claro.css" type="text/css" charset="utf-8" />
   <script src="//ajax.googleapis.com/ajax/libs/dojo/1.8.3/dojo/dojo.js" data-dojo-config="isDebug: true, async: true, parseOnLoad: true"></script>
@@ -24,18 +31,25 @@ from droneos_ui.auth import is_allowed
           parser.parse();
           });});
   </script>
-
+  ${self.js()}
 </head>
 
 <body class="${self.body_class()}" ${self.body_attrs()}>
-  
-  ${self.header()}
-  
-  ${self.content_wrapper()}
-  ${self.footer()}
-  
+   <div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			${self.header()}
+		</div>
+	</div>
+    ${self.content_wrapper()}
+	<div class="row">
+		<div class="col-md-12">${self.footer()}</div>
+	</div>
+  </div>
 </body>
 </html>
+
+<%def name="js()"></%def>
 
 <%def name="title()">The PyCK Web Application Development Framework</%def>
 
@@ -46,53 +60,92 @@ from droneos_ui.auth import is_allowed
 </%def>
 
 <%def name="body_class()">
+claro
 </%def>
 <%def name="body_attrs()">
 </%def>
 <%def name="header()">
-  <div id="top-small">
-    <img src="${request.static_url('droneos_ui:static/pyck-small.png')}"  alt="pyck"/>
+  <div>
     ${self.main_menu()}
   </div>
 </%def>
   
 <%def name="content_wrapper()">
   <div id="content">
-    <div class="flash">
-      <% flash_msgs = request.session.pop_flash() %>
-      
-      %for flash_msg in flash_msgs:
-        ${flash_msg}<br />
-      %endfor
-    </div>
+    
+    <% flash_msgs = request.session.pop_flash() %>
+    
+    %for flash_msg in flash_msgs:
+      <div class="alert alert-info">
+        ${flash_msg}
+      </div>
+    %endfor
+    
   ${self.body()}
   </div>
 </%def>
     
 <%def name="main_menu()">
-<p>
+<nav class="navbar navbar-inverse" role="navigation">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="${request.route_url('home')}"><img src="${request.static_url('droneos_ui:static/pyck-small.png')}"  alt="pyck" /></a>
+    </div>
+
+    
+    
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        %for routename, desc in auth_links:
+          <%
+          row_class = ""
+          if request.route_url(routename) == request.current_route_url():
+              row_class = "active"
+          %>
+          
+          %if is_allowed(request, routename):
+            <li class="${row_class}"><a href="${request.route_url(routename)}">${desc}</a></li>
+          %endif
+        %endfor
+      </ul>
+      <!--<form class="navbar-form navbar-left" role="search">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Search">
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+      </form>-->
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+        %if request.session.get('logged_in_user', None):
+        <form style="display: inline" action="${request.route_url('pyckauth_logout')}" method="get">
+          <button class="btn btn-danger">Logout</button>
+        </form>
+        %else:
+        <form style="display: inline" action="${request.route_url('pyckauth_login')}" method="get">
+          <button class="btn btn-success">Login</button>
+        </form>
+        %endif
+        </li>
+        
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
   
-  <a href="${request.route_url('home')}">Home</a> |
-  <a href="${request.route_url('contact')}">Contact Us</a> |
-  %if is_allowed(request, 'pyckauth_manager'):
-  <a href="${request.route_url('pyckauth_manager')}">Auth Manager</a> |
-  %endif
   
-  %if is_allowed(request, 'admin.admin_index'):
-  <a href="${request.route_url('admin.admin_index')}">Admin Section</a> |
-  %endif
   
-  %if request.session.get('logged_in_user', None):
-  <a href="${request.route_url('pyckauth_logout')}">Logout</a>
-  %else:
-  <a href="${request.route_url('pyckauth_login')}">Login</a>
-  %endif
   
-</p>
+  
+
 </%def>
-<%def name="footer()">
-  <div id="footer">
-    <div class="footer">&copy; Copyright 2008-2012, Set your company name here</div>
-  </div>
-</%def>
+<%def name="footer()"></%def>
 

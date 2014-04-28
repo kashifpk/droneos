@@ -2,6 +2,8 @@ from pyck.forms import Form
 from wtforms import validators, widgets
 from wtforms.fields import (PasswordField, TextField, DateField, TextAreaField, RadioField,
                             BooleanField, SelectField, SelectMultipleField)
+from wtdojo import DojoStringField, DojoSelectField
+from wtdojo.widgets import DojoTextArea, DojoCheckBox, DojoPasswordBox
 
 
 class MultiCheckboxField(SelectMultipleField):
@@ -12,32 +14,33 @@ class MultiCheckboxField(SelectMultipleField):
     the enclosed checkbox fields.
     """
     widget = widgets.ListWidget(html_tag='ul', prefix_label=False)
-    option_widget = widgets.CheckboxInput()
+    option_widget = DojoCheckBox()
 
 
 class UserForm(Form):
 
-    user_id = TextField('User ID', [validators.required()])
-    password = PasswordField('Password', [validators.required(),
-                                          validators.EqualTo('verify_password', 'Passwords must match')])
-    verify_password = PasswordField('Verify Password', [validators.required()])
+    user_id = DojoStringField('User ID', [validators.required()])
+    password = DojoStringField('Password', [validators.required(),
+                                            validators.EqualTo('verify_password', 'Passwords must match')],
+                               widget=DojoPasswordBox())
+    verify_password = DojoStringField('Verify Password', [validators.required()], widget=DojoPasswordBox())
 
 
 class LoginForm(Form):
 
-    user_id = TextField('User ID', [validators.required()])
-    password = PasswordField('Password', [validators.required()])
+    user_id = DojoStringField('User ID', [validators.required()])
+    password = DojoStringField('Password', [validators.required()], widget=DojoPasswordBox())
 
 
 class PermissionForm(Form):
 
-    permission = TextField('Permission', [validators.required()])
-    description = TextField('Description')
+    permission = DojoStringField('Permission', [validators.required()])
+    description = DojoStringField('Description')
 
 
 class RoutePermissionForm(Form):
 
-    route_name = SelectField("Route", [validators.required()])
+    route_name = DojoSelectField("Route", [validators.required()])
     request_methods = MultiCheckboxField("Request Methods", choices=[('ALL', 'ALL'),
                                                                      ('GET', 'GET'), ('POST', 'POST'),
                                                                      ('PUT', 'PUT'), ('DELETE', 'DELETE'),

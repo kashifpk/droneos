@@ -15,7 +15,7 @@ from ..apps import enabled_apps
 from .. import load_project_settings
 
 from ..models import (
-    DBSession,
+    db,
     User,
     Permission,
     RoutePermission,
@@ -41,27 +41,27 @@ def main(argv=sys.argv):
     setup_logging(config_uri)
     settings = get_appsettings(config_uri)
     engine = engine_from_config(settings, 'sqlalchemy.')
-    DBSession.configure(bind=engine)
-    DBSession.autoflush = True
+    db.configure(bind=engine)
+    db.autoflush = True
     Base.metadata.create_all(engine)
     with transaction.manager:
 
         #Authentication related basic user and permission setup
-        if 0 == DBSession.query(User).count():
-            DBSession.add(User('admin', hashlib.sha1('admin').hexdigest()))
-            DBSession.flush()
+        if 0 == db.query(User).count():
+            db.add(User('admin', hashlib.sha1('admin').hexdigest()))
+            db.flush()
 
-        if 0 == DBSession.query(Permission).count():
-            DBSession.add(Permission('admin', 'Manage administrative section'))
-            DBSession.flush()
+        if 0 == db.query(Permission).count():
+            db.add(Permission('admin', 'Manage administrative section'))
+            db.flush()
 
-        if 0 == DBSession.query(UserPermission).count():
-            DBSession.add(UserPermission('admin', 'admin'))
-            DBSession.flush()
+        if 0 == db.query(UserPermission).count():
+            db.add(UserPermission('admin', 'admin'))
+            db.flush()
 
-        if 0 == DBSession.query(RoutePermission).count():
-            DBSession.add(RoutePermission('pyckauth_manager', 'ALL', 'admin'))
-            DBSession.flush()
+        if 0 == db.query(RoutePermission).count():
+            db.add(RoutePermission('pyckauth_manager', 'ALL', 'admin'))
+            db.flush()
 
     #populate application models
     for app_name in enabled_apps:
@@ -70,6 +70,6 @@ def main(argv=sys.argv):
         #print("App Module: %s\n" % app_module.__name__)
 
         try:
-            app_module.populate_app(engine, DBSession)
+            app_module.populate_app(engine, db)
         except Exception, e:
             print(repr(e))

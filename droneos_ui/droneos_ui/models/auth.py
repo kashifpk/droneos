@@ -6,7 +6,7 @@ from sqlalchemy import (
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import backref, relationship
 
-from . import DBSession, Base
+from . import db, Base
 
 
 # RBAC models

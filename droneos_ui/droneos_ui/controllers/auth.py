@@ -2,7 +2,7 @@ import hashlib
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
-from ..models import DBSession, Permission, User, UserPermission, RoutePermission
+from ..models import db, Permission, User, UserPermission, RoutePermission
 
 from ..forms import LoginForm, UserForm, PermissionForm, RoutePermissionForm
 from sqlalchemy import func
@@ -10,8 +10,8 @@ from sqlalchemy import func
 
 @view_config(route_name='pyckauth_manager', renderer='pyckauth_manager.mako')
 def auth_manager(request):
-    user_count = DBSession.query(func.count(User.user_id)).scalar()
-    permission_count = DBSession.query(func.count(Permission.permission)).scalar()
+    user_count = db.query(func.count(User.user_id)).scalar()
+    permission_count = db.query(func.count(Permission.permission)).scalar()
     route_count = len(request.registry.introspector.get_category('routes'))
 
     return dict(user_count=user_count, permission_count=permission_count, route_count=route_count)
@@ -24,14 +24,14 @@ def auth_users(request):
 
     U = None
     if 'delete' == action:
-        DBSession.query(UserPermission).filter_by(user_id=request.GET['id']).delete()
-        DBSession.query(User).filter_by(user_id=request.GET['id']).delete()
+        db.query(UserPermission).filter_by(user_id=request.GET['id']).delete()
+        db.query(User).filter_by(user_id=request.GET['id']).delete()
 
         request.session.flash("User deleted!")
         return HTTPFound(location=request.current_route_url())
 
     if 'edit' == action:
-        U = DBSession.query(User).filter_by(user_id=request.GET['id']).first()
+        U = db.query(User).filter_by(user_id=request.GET['id']).first()
 
     f = UserForm(request.POST, U)
 
@@ -41,33 +41,33 @@ def auth_users(request):
                 U = User()
                 f.populate_obj(U)
                 U.password = hashlib.sha1(f.password.data).hexdigest()
-                DBSession.add(U)
+                db.add(U)
 
                 # Add user permissions here.
                 for key in request.POST.keys():
                     if key.startswith('chk_perm_'):
                         permission = request.POST[key]
                         UP = UserPermission(f.user_id.data, permission)
-                        DBSession.add(UP)
+                        db.add(UP)
 
                 request.session.flash("User created!")
                 return HTTPFound(location=request.current_route_url())
 
             elif 'edit' == action:
-                DBSession.query(UserPermission).filter_by(user_id=request.GET['id']).delete()
+                db.query(UserPermission).filter_by(user_id=request.GET['id']).delete()
                 for key in request.POST.keys():
                     if key.startswith('chk_perm_'):
                         permission = request.POST[key]
                         UP = UserPermission(f.user_id.data, permission)
-                        DBSession.add(UP)
+                        db.add(UP)
 
                 f.populate_obj(U)
                 U.password = hashlib.sha1(f.password.data).hexdigest()
                 request.session.flash("User updated!")
                 return HTTPFound(location=request.current_route_url())
 
-    permissions = DBSession.query(Permission).order_by('permission')
-    users = DBSession.query(User).order_by('user_id')
+    permissions = db.query(Permission).order_by('permission')
+    users = db.query(User).order_by('user_id')
 
     return dict(action=action, user_form=f, permissions=permissions, users=users, user=U)
 
@@ -79,15 +79,15 @@ def auth_permissions(request):
 
     P = None
     if 'delete' == action:
-        DBSession.query(UserPermission).filter_by(permission=request.GET['id']).delete()
-        DBSession.query(RoutePermission).filter_by(permission=request.GET['id']).delete()
-        DBSession.query(Permission).filter_by(permission=request.GET['id']).delete()
+        db.query(UserPermission).filter_by(permission=request.GET['id']).delete()
+        db.query(RoutePermission).filter_by(permission=request.GET['id']).delete()
+        db.query(Permission).filter_by(permission=request.GET['id']).delete()
 
         request.session.flash("Permission deleted!")
         return HTTPFound(location=request.current_route_url())
 
     if 'edit' == action:
-        P = DBSession.query(Permission).filter_by(permission=request.GET['id']).first()
+        P = db.query(Permission).filter_by(permission=request.GET['id']).first()
 
     f = PermissionForm(request.POST, P)
 
@@ -96,7 +96,7 @@ def auth_permissions(request):
             if 'add' == action:
                 P = Permission()
                 f.populate_obj(P)
-                DBSession.add(P)
+                db.add(P)
 
                 request.session.flash("Permission created!")
                 return HTTPFound(location=request.current_route_url())
@@ -104,11 +104,11 @@ def auth_permissions(request):
             elif 'edit' == action:
                 if f.permission.data != P.permission:
                     # Need to update permission in UserPermission and RoutePermission records too
-                    user_permissions = DBSession.query(UserPermission).filter_by(permission=request.GET['id'])
+                    user_permissions = db.query(UserPermission).filter_by(permission=request.GET['id'])
                     for up in user_permissions:
                         up.permission = f.permission.data
 
-                    route_permissions = DBSession.query(RoutePermission).filter_by(permission=request.GET['id'])
+                    route_permissions = db.query(RoutePermission).filter_by(permission=request.GET['id'])
                     for rp in route_permissions:
                         rp.permission = f.permission.data
 
@@ -116,7 +116,7 @@ def auth_permissions(request):
                 request.session.flash("Permission updated!")
                 return HTTPFound(location=request.current_route_url())
 
-    permissions = DBSession.query(Permission).order_by('permission')
+    permissions = db.query(Permission).order_by('permission')
 
     return dict(action=action, permission_form=f, permissions=permissions, permission=P)
 
@@ -126,7 +126,7 @@ def auth_routes(request):
     action = request.GET.get('action', 'add')
 
     if 'delete' == action:
-        DBSession.query(RoutePermission).filter_by(
+        db.query(RoutePermission).filter_by(
                 route_name=request.GET['r'], method=request.GET['m'],
                 permission=request.GET['p']).delete()
 
@@ -145,7 +145,7 @@ def auth_routes(request):
     f.route_name.choices = routes
 
     permissions = []
-    Ps = DBSession.query(Permission).order_by('permission')
+    Ps = db.query(Permission).order_by('permission')
     for P in Ps:
         permissions.append((P.permission, P.permission))
 
@@ -158,12 +158,12 @@ def auth_routes(request):
                 for P in f.permissions.data:
                     for M in f.request_methods.data:
                         RP = RoutePermission(route_name=f.route_name.data, method=M, permission=P)
-                        DBSession.add(RP)
+                        db.add(RP)
 
                 request.session.flash("Route permissions created!")
                 return HTTPFound(location=request.current_route_url())
 
-    route_permissions = DBSession.query(RoutePermission).order_by(RoutePermission.route_name,
+    route_permissions = db.query(RoutePermission).order_by(RoutePermission.route_name,
                                                                   RoutePermission.permission, RoutePermission.method)
 
     return dict(action=action, route_permissions=route_permissions, route_permissions_form=f)
@@ -175,7 +175,7 @@ def login(request):
     login_form = LoginForm(request.POST)
 
     if 'POST' == request.method and login_form.validate():
-        U = DBSession.query(User).filter_by(user_id=login_form.user_id.data).first()
+        U = db.query(User).filter_by(user_id=login_form.user_id.data).first()
 
         if hashlib.sha1(login_form.password.data).hexdigest() == U.password:
 
@@ -183,7 +183,7 @@ def login(request):
 
             #Get user permissions and store them into request.session['auth_user_permissions']
             user_permissions = []
-            UPs = DBSession.query(UserPermission.permission).filter_by(user_id=U.user_id).all()
+            UPs = db.query(UserPermission.permission).filter_by(user_id=U.user_id).all()
             for UP in UPs:
                 user_permissions.append(UP[0])
 
