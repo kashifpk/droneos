@@ -85,7 +85,7 @@ DroneOS - Add Route
     <label for="route_name">Route Name</label>
     <input class="form-control" id="route_name" name="route_name" placeholder="Route name">
   </div>
-  <div class="form-group">
+  <div class="form-groupyckp">
     <label for="route_desc">Route Description</label>
     <textarea class="form-control" id="route_desc" name="route_desc" placeholder="Route description"></textarea>
   </div>

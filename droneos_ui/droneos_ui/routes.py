@@ -11,6 +11,8 @@ def application_routes(config):
     config.add_route('add_route', '/routes/add')
     config.add_route('view_routes', '/routes/view')
     config.add_route('view_route', '/routes/view/{rname}')
+    config.add_route('update_route', '/routes/update/{rname}')
+    config.add_route('set_active', '/routes/setactive/{rname}')
 
     config.add_route('pyckauth_login', '/login')
     config.add_route('pyckauth_logout', '/logout')

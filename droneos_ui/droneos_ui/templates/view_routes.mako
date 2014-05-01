@@ -14,6 +14,7 @@ DroneOS - Routes
      <tr>
          <th>Name</th>
          <th>Description</th>
+         <th>State</th>
          <th></th>
      </tr>
  </thead>
@@ -22,6 +23,8 @@ DroneOS - Routes
      <tr>
          <td>${R.name}</td>
          <td>${R.description}</td>
+         <td>${R.active}</td>
+         <td><a href="${request.route_url('set_active', rname=R.name)}">Set Active</a></td>
          <td><a href="${request.route_url('view_route', rname=R.name)}">View Route</a></td>
      </tr>
      %endfor

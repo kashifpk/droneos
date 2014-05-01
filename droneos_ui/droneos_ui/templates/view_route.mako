@@ -44,17 +44,21 @@ DroneOS - Add Route
 </%def>
 
 <div>
-<h1>Viewing Route ${route.name}</h1>
+<h1>Viewing Route  : <b> ${route.name} </b></h1>
 <p>${route.description}</p>
 
-<form action="${request.route_url('add_route')}" method="POST" role="form" class="form-horizontal">
+<form action="${request.route_url('update_route', rname=route.name)}" method="POST" role="form" class="form-horizontal">
    <table class="table table-striped table-hover">
     <thead>
         <tr>
-            <th>Index</th>
-            <th>Latitude</th>
-            <th>Longitude</th>
-            <th>Altitude</th>
+            <th><b>Index</b></th>
+            <th><b>Latitude</b></th>
+            <th><b>Longitude</b></th>
+            <th><b>Altitude</b></th>
+            <th><b>Surveillance</b></th>
+            <th><b>Hover</b></th>
+            <th><b>Interval</b></th>
+            <th><b>Till Next</b></th>
         </tr>
     </thead>
     <tbody>
@@ -64,6 +68,25 @@ DroneOS - Add Route
             <td>${P.lat}</td>
             <td>${P.lng}</td>
             <td><input class="form-control" name="alt_${P.idx}" value="${P.alt}" /></td>
+            <td>
+            <select name="type_${P.idx}">
+                %for value in ['none', 'audio', 'image', 'video']:
+                    <option value="${value}"
+                            %if P.surveil == value:
+                            selected
+                            %endif
+                            >${value.title()}</option>
+                %endfor
+            </select>
+            </td>
+            <td><input class="form-control" name="hover_${P.idx}" value="${P.hover_time}" /></td>
+            <td><input class="form-control" name="interval_${P.idx}" value="${P.interval}" /></td>
+            <td><input type="checkbox" name="continue_${P.idx}" value="yes"
+                       %if P.continue_till_next:
+                       checked="true"
+                       %endif
+                       ></td>
+            
         </tr>
         %endfor
     </tbody>
@@ -71,11 +94,12 @@ DroneOS - Add Route
    </table>
   
   
-  <button type="submit" class="btn btn-success">Update</button>
+  <button type="submit" class="btn btn-success">Update</button
+  
     
 </form>
-
+</br>
 <div id="map-canvas" style="width:100%;height:650px;"></div>
-
+ 
 
 </div>
