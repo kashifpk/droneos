@@ -61,6 +61,57 @@ def add_route(request):
     return {}
 
 
+@view_config(route_name='update_route')
+def update_route(request):
+    "Update a route"
+
+    if 'POST' == request.method:
+        #print(request.POST)
+        #MultiDict([('formvar', u'(33.66256773749932, 72.99333572387695),(33.66671105868779, 73.02286148071289),(33.654780611242245, 73.0547046661377)'), ('route_name', u'asdf'), ('route_desc', u'asdf')])
+        route_name = request.matchdict['rname']
+
+    route = db.query(Route).filter_by(name=route_name).first()
+    if not route:
+        return HTTPNotFound()
+
+    for point in route.points:
+        alt = float(request.POST['alt_%i' % point.idx])
+        point.alt = alt
+        surveil = (request.POST['type_%i' % point.idx])
+        point.surveil = surveil
+        hover = int(request.POST['hover_%i' % point.idx])
+        point.hover_time = hover
+        interval = int(request.POST['interval_%i' % point.idx])
+        point.interval = interval
+        ctrl_name = 'continue_%i' % point.idx
+        if ctrl_name in request.POST and 'yes' == request.POST[ctrl_name]:
+            point.continue_till_next = True
+        else:
+            point.continue_till_next = False
+ 
+    request.session.flash("Route updated!")
+    return HTTPFound(location=request.route_url('view_route', rname=route_name))
+
+
+@view_config(route_name='set_active')
+def set_active(request):
+    "Sets a route active"
+
+    route_name = request.matchdict['rname']
+
+    routes = db.query(Route)
+
+    for route in routes:
+        route.active = False
+
+    route = db.query(Route).filter_by(name=route_name).first()
+    route.active = True
+    #assert False
+
+    request.session.flash("Route activated!")
+    return HTTPFound(location=request.route_url('view_routes'))
+
+
 @view_config(route_name='view_routes', renderer='view_routes.mako')
 def view_routes(request):
 
