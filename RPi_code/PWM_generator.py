@@ -1,6 +1,13 @@
 import RPi.GPIO as GPIO
 import sys
 import time
+from fractions import gcd
+
+
+def get_min_sleep_interval(pulses_list):
+    plist2 = [int(i*1000) for i in pulses_list]
+    res = reduce(gcd, plist2)
+    return res/1000.0
 
 
 class PWM(object):
@@ -47,18 +54,44 @@ class PWM(object):
         if not self.pulse_generators:
             return
 
-        pulse = self.pulse_generators[0]
+        pulses_list = [i['pulse'] * i['clock'] for i in self.pulse_generators]
+        min_pulse = get_min_sleep_interval(pulses_list)
 
-        on_sleep_time = pulse['pulse'] * pulse['clock']
-        off_sleep_time = pulse['clock'] - on_sleep_time
+        pin_states = {}
+        for pulse in self.pulse_generators:
+            on_time = pulse['pulse'] * pulse['clock']
+            off_time = pulse['clock'] - on_time
+
+            pin_states[pulse['pin']] = dict(off_time=off_time,
+                                            on_time=on_time,
+                                            current_status='off',
+                                            current_state_duration=0.0)
 
         while True:
-            try:
-                GPIO.output(pulse['pin'], 1)
-                time.sleep(on_sleep_time)
+            time.sleep(min_pulse)
 
-                GPIO.output(pulse['pin'], 0)
-                time.sleep(off_sleep_time)
+            try:
+                for pulse in self.pulse_generators:
+
+                    pin = pulse['pin']
+                    status = pin_states[pin]['current_status']
+                    pin_states[pin]['current_state_duration'] += min_pulse
+
+                    if 'off' == status:
+
+                        if pin_states[pin]['current_state_duration'] >= pin_states[pin]['off_time']:
+                            # Turn the pin ON
+                            GPIO.output(pulse['pin'], 1)
+                            pin_states[pin]['current_status'] = 'on'
+                            pin_states[pin]['current_state_duration'] = 0.0
+
+                    elif 'on' == status:
+
+                        if pin_states[pin]['current_state_duration'] >= pin_states[pin]['on_time']:
+                            # Turn the pin ON
+                            GPIO.output(pulse['pin'], 0)
+                            pin_states[pin]['current_status'] = 'off'
+                            pin_states[pin]['current_state_duration'] = 0.0
 
             except (KeyboardInterrupt, SystemExit):
                 break
@@ -66,6 +99,7 @@ class PWM(object):
                 print(exp)
 
 if '__main__' == __name__:
+
     usage = """
     Syntax:
 
