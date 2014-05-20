@@ -21,6 +21,9 @@ class ServoMotor(object):
         self.current_speed = 0
         self.powered = False
 
+    def __str__(self):
+        return "<%s (Pin: %i): %i>" % (self.name, self.pin, self.current_speed)
+
 
     def start(self):
         "Run the procedure to init the PWM"
