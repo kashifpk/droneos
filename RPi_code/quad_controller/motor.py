@@ -2,6 +2,9 @@
 Motor Controller module using Raspberry Pi's PWM Servo controller
 """
 #Derived from code by: solenero.tech@gmail.com
+import logging
+log_format = '%(levelname)s | %(asctime)-15s | %(message)s'
+logging.basicConfig(format=log_format, level=logging.ERROR)
 
 from RPIO import PWM
 
@@ -24,13 +27,11 @@ class ServoMotor(object):
     def __str__(self):
         return "<%s (Pin: %i): %i>" % (self.name, self.pin, self.current_speed)
 
-
     def start(self):
         "Run the procedure to init the PWM"
 
         self.__IO = PWM.Servo()
         self.powered = True
-
 
     def stop(self):
         "Stop PWM signal"

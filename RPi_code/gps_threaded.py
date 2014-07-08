@@ -3,6 +3,7 @@ import time
 from math import *
 from gps import gps, WATCH_ENABLE
 
+THREASHOLD = 5
 
 class Point(object):
 
@@ -12,6 +13,8 @@ class Point(object):
 
     def __eq__(self, other):
         if self.lat == other.lat and self.lng == other.lng:
+            return True
+        elif abs(self.lat - other.lat) < THREASHOLD and abs(self.lng - other.lng) < THREASHOLD:
             return True
         else:
             return False
