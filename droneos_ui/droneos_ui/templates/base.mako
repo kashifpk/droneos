@@ -96,7 +96,7 @@ claro
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="${request.route_url('home')}"><img src="${request.static_url('droneos_ui:static/pyck-small.png')}"  alt="pyck" /></a>
+      <a class="navbar-brand" href="${request.route_url('home')}"><img src="${request.static_url('droneos_ui:static/DroneOS-small.png')}"  alt="pyck" /></a>
     </div>
 
     

@@ -1,13 +1,13 @@
 <%inherit file="base.mako"/>
 
 <%def name="title()">
-PyCK Web Development Framework
+Drone Operating System
 </%def>
 
 <%def name="header()">
   <div id="top" style="text-align: center">
     <br /><br />
-    <img src="${request.static_url('droneos_ui:static/pyck-admin.png')}"  alt="pyck"/>
+    <img src="${request.static_url('droneos_ui:static/DroneOS.png')}"  alt="pyck"/>
   </div>
   ${self.main_menu()}
 </%def>
