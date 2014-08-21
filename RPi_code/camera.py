@@ -8,11 +8,20 @@ def take_picture(last_pic_time):
     surveil = 'image'
     interval = 1
     if surveil == 'image' and (time_difference.total_seconds() >= interval):
+<<<<<<< HEAD
         image = '/home/amber/droneos/RPi_code/image/"' + str(datetime.now()) + '.jpg"'
         #print(image)
         cmd = 'fswebcam -d /dev/video0 -r 1200*720 -F2 ' + image
         print(cmd)
         os.system(cmd)
+=======
+        image = '/tmp/image/"' + str(datetime.now()) + '.jpg"'
+        #print(image)
+        cmd = 'fswebcam -d /dev/video1 -r 1200*720 -F2 ' + image
+        print(cmd)
+        os.system(cmd)
+        print(cmd)
+>>>>>>> e8f7b34679a54b190cce189c46f1fef55d19994c
         return True
     else:
         return False

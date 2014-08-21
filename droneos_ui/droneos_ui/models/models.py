@@ -1,6 +1,10 @@
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy import Column, ForeignKey, Integer, Unicode, UnicodeText, Float, Boolean
+<<<<<<< HEAD
 from math import *
+=======
+from math import radians
+>>>>>>> e8f7b34679a54b190cce189c46f1fef55d19994c
 
 from . import db, Base
 

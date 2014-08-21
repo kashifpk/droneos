@@ -21,7 +21,11 @@ def take_picture(last_pic_time, point):
     if point.surveil == 'image' and (time_difference.total_seconds() >= point.interval):
         image = '/home/pi/image/"' + str(datetime.now()) + '.jpg"'
         #print(image)
+<<<<<<< HEAD
         cmd = 'fswebcam -r 1200*720 -F2 ' + image
+=======
+        cmd = 'fswebcam -d /dev/video1 -r 1200*720 -F2 ' + image
+>>>>>>> e8f7b34679a54b190cce189c46f1fef55d19994c
         os.system(cmd)
         print(cmd)
         return True
@@ -35,6 +39,7 @@ def take_picture(last_pic_time, point):
 all_pins = (PIN_HOLD, PIN_BACK, PIN_LEFT, PIN_RIGHT, PIN_FRONT, PIN_REACHED)
 
 if '__main__' == __name__:
+<<<<<<< HEAD
     
     G.cleanup()
     G.setmode(G.BOARD)
@@ -50,6 +55,23 @@ if '__main__' == __name__:
 
     for pin in all_pins:
         G.output(pin, 0)
+=======
+    #
+    #G.cleanup()
+    #G.setmode(G.BOARD)
+    #
+    #for pin in all_pins:
+    #    G.setup(pin, G.OUT)
+    #
+    ## turn all LEDs on for 2 seconds for diagnostics
+    #for pin in all_pins:
+    #    G.output(pin, 1)
+    #
+    #time.sleep(2)
+    #
+    #for pin in all_pins:
+    #    G.output(pin, 0)
+>>>>>>> e8f7b34679a54b190cce189c46f1fef55d19994c
 
     gpsp = GpsPoller()
     gpsp.start()
@@ -76,10 +98,17 @@ if '__main__' == __name__:
         target = False
         ## gpsp now polls every .2 seconds for new data, storing it in self.current_value
         while target == False:
+<<<<<<< HEAD
             ## In the main thread, every 5 seconds print the current value
             time.sleep(1)
                 ##print gpsp.get_current_value()
             try:
+=======
+            ## In the main thread, every 1 seconds print the current value
+                ##print gpsp.get_current_value()
+            try:
+                time.sleep(1)
+>>>>>>> e8f7b34679a54b190cce189c46f1fef55d19994c
                 coords = gpsp.get_current_value()
                 current_point = Point(lat=round(coords['lat'], 5), lng=round(coords['lon'], 5))
                 print("Target Point: " + str(destination))

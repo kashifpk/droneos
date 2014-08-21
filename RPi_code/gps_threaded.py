@@ -98,7 +98,11 @@ if __name__ == '__main__':
         try:
             coords = gpsp.get_current_value()
             current_point = Point(round(coords['lat'], 5), round(coords['lon'], 5))
+<<<<<<< HEAD
             print("Tajairget Point: " + str(destination))
+=======
+            print("Target Point: " + str(destination))
+>>>>>>> e8f7b34679a54b190cce189c46f1fef55d19994c
             print("Current Point: " + str(current_point))
             print("Lat: {0}, Lng: {1}, Alt: {2}".format(round(coords['lat'], 5), round(coords['lon'], 5), coords['alt']))
             dict1 = current_point.directions_to(destination)

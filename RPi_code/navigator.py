@@ -2,19 +2,31 @@ import RPi.GPIO as GPIO
 import sys
 import time
 import logging
+<<<<<<< HEAD
 from math import *
 from gps_threaded import GpsPoller
+=======
+from math import radians
+from gps_threaded import Point, GpsPoller
+>>>>>>> e8f7b34679a54b190cce189c46f1fef55d19994c
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy import Column, ForeignKey, Integer, Unicode, UnicodeText, Float, Boolean
+<<<<<<< HEAD
 import os
 from datetime import datetime
 
 Base = declarative_base()
 
 THRESHOLD = 0.003
+=======
+
+Base = declarative_base()
+
+THRESHOLD = 0.00003
+>>>>>>> e8f7b34679a54b190cce189c46f1fef55d19994c
 
 log = logging.getLogger(__name__)
 
@@ -102,29 +114,45 @@ class Point(Base):
 class Navigator(object):
     "Navigator class for providing directions based on GPS coordinates"
 
+<<<<<<< HEAD
     #IMAGE_BASE = '/home/amber/droneos/RPi_code/image/'
     IMAGE_BASE = '/home/pi/droneos/RPi_code/image/'
 
 
+=======
+>>>>>>> e8f7b34679a54b190cce189c46f1fef55d19994c
     PIN_HOLD = 22
     PIN_BACK = 15     # South
     PIN_LEFT = 13     # West
     PIN_RIGHT = 11    # East
     PIN_FRONT = 7     # North
+<<<<<<< HEAD
     PIN_REACHED = 18
 
     all_pins = (PIN_HOLD, PIN_BACK, PIN_LEFT, PIN_RIGHT, PIN_FRONT, PIN_REACHED)
     last_pic_time = None
+=======
+
+    all_pins = (PIN_HOLD, PIN_BACK, PIN_LEFT, PIN_RIGHT, PIN_FRONT)
+>>>>>>> e8f7b34679a54b190cce189c46f1fef55d19994c
 
     def __init__(self):
         "Setup GPIO and other stuff etc"
 
         self.gps = GpsPoller()
         self.gps.start()
+<<<<<<< HEAD
         self.gpio_setup()
     
     def gpio_setup(self):
     
+=======
+        
+        self.gpio_setup()
+
+    def gpio_setup(self):
+
+>>>>>>> e8f7b34679a54b190cce189c46f1fef55d19994c
         GPIO.cleanup()
         GPIO.setmode(GPIO.BOARD)
         for pin in self.all_pins:
@@ -145,6 +173,7 @@ class Navigator(object):
         "Navigates to the target point"
 
         target_reached = False
+<<<<<<< HEAD
 
         while not target_reached:
             try:
@@ -279,15 +308,58 @@ TEST_POINTS = [
 #          alt=200.0, surveil='image', hover_time=5,
 #          interval=1, continue_till_next=False)
 #]
+=======
+        while not target_reached:
+            try:
+                time.sleep(2)
+                coords = self.gps.get_current_value()
+                if 'lat' not in coords:
+                    log.info("No GPS fix yet! waiting")
+                    continue
+
+                current_point = Point(lat=round(coords['lat'], 5), lon=round(coords['lon'], 5))
+                print(current_point)
+                print(current_point.directions_to(target_point))
+                if current_point == target_point:
+                    print("*** Target Point Reached")
+                    #GPIO.output(PIN_HOLD, 1)
+
+            except Exception, exp:
+                log.error("Error fetching GPS coordinates")
+                #print("%r" % exp)
+                #print(coords)
+    
+
+# This list is used when the script is executed with "test" argument.
+TEST_POINTS = [
+    Point(idx=1, lat=37.12345, lng=73.12321,
+          alt=200.0, surveil='image', hovertime=0,
+          interval=3, continue_till_next=True),
+    Point(idx=2, lat=37.12345, lng=73.12321,
+          alt=200.0, surveil='image', hovertime=0,
+          interval=3, continue_till_next=True),
+    Point(idx=3, lat=37.12345, lng=73.12321,
+          alt=200.0, surveil='image', hovertime=0,
+          interval=3, continue_till_next=True),
+]
+>>>>>>> e8f7b34679a54b190cce189c46f1fef55d19994c
 
 
 if '__main__' == __name__:
 
+<<<<<<< HEAD
     guide = Navigator()
     guide.blink()
 
     target_points = []
     
+=======
+    guide = Navigator(gpsp)
+    #guide.blink()
+
+    target_points = []
+
+>>>>>>> e8f7b34679a54b190cce189c46f1fef55d19994c
     if len(sys.argv) > 1 and 'test' == sys.argv[1]:
         target_points = TEST_POINTS
     else:
@@ -307,6 +379,7 @@ if '__main__' == __name__:
         target_points = session.query(Point).filter_by(route_id=route.id).order_by(Point.idx).all()
 
     for point in target_points:
+<<<<<<< HEAD
         print(point)
         guide.navigate_to(point)
     print("!!! FINAL DESTINATION !!!")
@@ -314,3 +387,8 @@ if '__main__' == __name__:
             GPIO.output(pin, 0)
     GPIO.output(guide.PIN_REACHED, 1)
     sys.exit()
+=======
+        guide.navigate_to(point)
+
+    print("!!! FINAL DESTINATION !!!")
+>>>>>>> e8f7b34679a54b190cce189c46f1fef55d19994c
