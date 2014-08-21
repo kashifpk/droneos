@@ -1,8 +1,7 @@
 <%!
 from droneos_ui.auth import is_allowed
 
-auth_links = [('home', 'Home'), ('contact', 'Contact Us'),
-			  ('add_route', 'Add Route'), ('view_routes', 'View Routes'),
+auth_links = [('home', 'Home'), ('add_route', 'Add Route'), ('view_routes', 'View Routes'),
               ('admin.admin_index', 'Admin Section'), ('pyckauth_manager', 'Auth Manager')]
 
 %>
@@ -96,7 +95,7 @@ claro
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="${request.route_url('home')}"><img src="${request.static_url('droneos_ui:static/pyck-small.png')}"  alt="pyck" /></a>
+      <a class="navbar-brand" href="${request.route_url('home')}"><img src="${request.static_url('droneos_ui:static/DroneOS-small.png')}"  alt="pyck" /></a>
     </div>
 
     
@@ -130,7 +129,7 @@ claro
         </form>
         %else:
         <form style="display: inline" action="${request.route_url('pyckauth_login')}" method="get">
-          <button class="btn btn-success">Login</button>
+          <a href="${request.static_url('droneos_ui:static/full final.html')}" class="btn btn-success">User Manual</a>
         </form>
         %endif
         </li>

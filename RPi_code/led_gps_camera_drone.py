@@ -1,6 +1,10 @@
 import RPi.GPIO as G
 import time
 from gps_threaded import Point, GpsPoller
+from sqlalchemy import create_engine
+from droneos_ui.models import Route, Point
+from sqlalchemy.orm import sessionmaker
+from point import Points
 
 PIN_HOLD = 22
 PIN_BACK = 15     # South
@@ -30,8 +34,21 @@ if '__main__' == __name__:
     gpsp = GpsPoller()
     gpsp.start()
     
-    # HERE fetch points from database
-    target_points = []   # replace with list fetched from database
+    # path to database
+    engine = create_engine('sqlite:///../droneos_ui/droneos_ui.db')
+
+    #connecting to database
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+
+    #fetching the route that is active
+    route = session.query(Route).filter(Route.active == True).all()
+    for R in route:
+	r_id = R.id
+	print r_id
+    
+    target_points = session.query(Point).filter(Point.route_id == r_id).order_by(Point.id).all()
+    
     for point in target_points:
         pass
         #destination = Point(33.63388,73.04414)

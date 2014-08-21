@@ -19,7 +19,7 @@ DroneOS - Add Route
         var mapDiv = document.getElementById('map-canvas');
         var map = new google.maps.Map(mapDiv, {
             center: iiui,
-            zoom: 14,
+            zoom: 16,
             mapTypeId: google.maps.MapTypeId.ROADMAP
         });
         

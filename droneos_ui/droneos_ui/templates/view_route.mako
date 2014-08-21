@@ -70,7 +70,7 @@ DroneOS - Add Route
             <td><input class="form-control" name="alt_${P.idx}" value="${P.alt}" /></td>
             <td>
             <select name="type_${P.idx}">
-                %for value in ['none', 'audio', 'image', 'video']:
+                %for value in ['none',  'image']:
                     <option value="${value}"
                             %if P.surveil == value:
                             selected

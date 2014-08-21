@@ -92,6 +92,8 @@ class DroneController(object):
                             self.average_speed = avg_speed
                             self.angle_x = rot_x
                             self.angle_y = rot_y
+                    else:
+                        time.sleep(0.1)
 
                 except socket.error, err:
                     if err.args[0] == errno.EWOULDBLOCK:

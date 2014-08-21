@@ -3,13 +3,16 @@ import time
 from math import *
 from gps import gps, WATCH_ENABLE
 
-THREASHOLD = 5
+THREASHOLD = 0
 
 class Point(object):
 
     def __init__(self, lat, lng):
         self.lat = lat
         self.lng = lng
+
+    def __str__(self):
+        return "Point({0}, {1})".format(self.lat, self.lng)
 
     def __eq__(self, other):
         if self.lat == other.lat and self.lng == other.lng:
@@ -37,6 +40,7 @@ class Point(object):
         a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
         c = 2 * atan2(sqrt(a), sqrt(1-a))
         base = 6371 * c
+        base = round(base, 4)
 
         #Horizontal Bearing
         def calc_bearing(lat1, lon1, lat2, lon2):
@@ -48,6 +52,8 @@ class Point(object):
 
         bearing = calc_bearing(lat1, lon1, lat2, lon2)
         bearing = degrees(bearing)
+        if (bearing < 0):
+            bearing = 360 + bearing
 
         ##Output the data
         #print("---------------------------------------")
@@ -81,7 +87,7 @@ class GpsPoller(threading.Thread):
 
 if __name__ == '__main__':
 
-    destination = Point(33.63388,73.04414)
+    destination = Point(33.63593, 73.05824)
     gpsp = GpsPoller()
     gpsp.start()
     # gpsp now polls every .2 seconds for new data, storing it in self.current_value
@@ -92,9 +98,13 @@ if __name__ == '__main__':
         try:
             coords = gpsp.get_current_value()
             current_point = Point(round(coords['lat'], 5), round(coords['lon'], 5))
+            print("Tajairget Point: " + str(destination))
+            print("Current Point: " + str(current_point))
             print("Lat: {0}, Lng: {1}, Alt: {2}".format(round(coords['lat'], 5), round(coords['lon'], 5), coords['alt']))
-            print(current_point.directions_to(destination))
-            if current_point == destination:
+            dict1 = current_point.directions_to(destination)
+            print(dict1)
+            distance = dict1.itervalues().next()
+            if distance <= 0.003:
                 print("!!! FINAL DESTINATION !!!")
         except Exception, exp:
             print("%r" % exp)
